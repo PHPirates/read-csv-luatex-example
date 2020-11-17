@@ -23,7 +23,7 @@ jobs:
           source ./texlive/texlive_install.sh
           cd src
           texliveonfly $FILE.tex
-          latexmk $FILE.tex
+          latexmk -lualatex $FILE.tex
       - name: Set filename
         id: output_file
         run: |
