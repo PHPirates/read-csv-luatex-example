@@ -1,0 +1,35 @@
+name: texlive
+on: push
+
+env:
+  FILE: main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v1
+      - name: Cache installation
+        id: cache-texlive
+        uses: actions/cache@v2
+        with:
+          path: |
+            /tmp/texlive
+            $HOME/.texlive
+          key: ${{ runner.os }}-texlive
+      - name: Install and compile
+        run: |
+          source ./texlive/texlive_install.sh
+          cd src
+          texliveonfly $FILE.tex
+          latexmk $FILE.tex
+      - name: Set filename
+        id: output_file
+        run: |
+          echo ::set-output name=OUTPUT_FILE::src/$FILE.pdf
+      - name: Upload pdf
+        uses: actions/upload-artifact@v2
+        with:
+          name: output
+          path: ${{ steps.output_file.outputs.OUTPUT_FILE }}
