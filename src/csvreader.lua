@@ -2,29 +2,28 @@
 
 -- Convert a csv file to a Lua table
 -- file: the name of the file to read
--- delim: the delimiter (default ',')
-function dataToTable(file, delim)
-    --Set initial values
-    if delim == nil then --allow delim to be optional
-        delim = ','
-    end
+-- delimiter: the delimiter (default ',')
+function dataToTable(file, delimiter)
+    delimiter = delimiter or ','
 
-    file = io.open(file) --Always ensures that the file is in its beginning position
+    -- Always ensures that the file is in its beginning position
+    file = io.open(file)
     local data = {}
     local row = 1
 
-    --Loop through data
-    for current in file:lines() do --file:lines() returns a string
-        data[row] = {} --Initialize array within array (make 2d)
-        local col = 1 --Used for adding individual columns of data
+    -- Loop through the lines in the file
+    for current in file:lines() do
+        -- Initialize table for this row
+        data[row] = {}
+
+        -- Used for adding individual columns of data
+        local col = 1
         data[row][col] = ""
-        for ch in current:gmatch('.') do --ch is a character in the string
-            if ch == delim then
-                col = col + 1
-                data[row][col] = "" --initialize string in new column
-            else
-                data[row][col] = data[row][col] .. ch
-            end
+
+        -- Split on delimiter
+        for str in current:gmatch('([^'..delimiter..']+)') do
+            data[row][col] = str
+            col = col + 1
         end
         row = row + 1
     end
