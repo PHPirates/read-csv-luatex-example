@@ -1,0 +1,41 @@
+## A gitignore for LaTeX projects
+
+*.iml
+.idea/
+out/**
+auxil/**
+
+## In case the auxil/ and out/ directories are not used
+src/*.aux
+src/*.bbl
+src/*.bcf
+src/*.blg
+src/*.dvi
+src/*.fdb_latexmk
+src/*.fls
+src/*.ilg
+src/*.ind
+src/*.log
+src/*.out
+src/*.out.ps
+src/*.pdf
+src/*.run.xml
+src/*.sagetex.sage
+src/*.synctex
+src/*.synctex.gz
+src/*.synctex(busy)
+src/*.toc
+src/*.upa
+src/*doctest.sage
+
+# Generated files by SageTeX
+!auxil/*.sagetex.scmd
+!auxil/*.sagetex.sout
+!src/sagetex.sty
+
+# JabRef files
+src/*.bak
+src/*.sav
+
+# Generated files by minted
+src/_minted-*/*

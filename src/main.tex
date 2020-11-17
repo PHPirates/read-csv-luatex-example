@@ -1,0 +1,35 @@
+%! compiler = lualatex
+%! Author = thomas
+%! Date = 11/17/20
+
+% Preamble
+\documentclass[11pt]{article}
+
+% Packages
+\usepackage[utf8x]{luainputenc}
+\usepackage{luacode} %\luaexec macro: allows for '\\hline' in inline code
+
+% Document
+\begin{document}
+    \begin{tabular}{|c|c|c|}
+        \hline
+        \luaexec{
+            require('csvreader.lua')
+            t = dataToTable('data.csv')
+            tex.sprint(tableToTeX(t, '\\hline'))
+        } \\
+        \hline
+    \end{tabular}
+    \hspace{2cm}
+    \begin{tabular}{c|c|c}
+        \luaexec{
+            tex.sprint(tableToTeX(t, '\\hline', {2}))
+        }
+    \end{tabular}
+    \hspace{2cm}
+    \begin{tabular}{c|cc}
+        \luaexec{
+            tex.sprint(tableToTeX(t, '\\hline', {2, 4, 6, 8}))
+        }
+    \end{tabular}
+\end{document}
