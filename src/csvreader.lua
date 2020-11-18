@@ -1,9 +1,10 @@
 -- Script based on https://gist.github.com/calebreister/8dd7ab503c91dea4dd2c499b9d004231
+-- Follows https://github.com/luarocks/lua-style-guide
 
--- Convert a csv file to a Lua table
--- file: the name of the file to read
--- delimiter: the delimiter (default ',')
-function dataToTable(file, delimiter)
+-- Convert a csv file to a Lua table.
+
+-- @return table: Two-dimensional table with cell values.
+function data_to_table(file, delimiter)
     delimiter = delimiter or ','
 
     -- Always ensures that the file is in its beginning position
@@ -28,37 +29,24 @@ function dataToTable(file, delimiter)
         row = row + 1
     end
 
-    --Clean up
+    -- Clean up
     file:close()
     return data
 end
 
-function tableToTeX(array, inject, inject_on)
-    --[[
-    array: the 2D array of data
-    inject: string between tabular lines
-    inject_on: list of lines to inject string at the end
-            - Bound is [2, rows - 1], nil adds inject string to all lines
-            - Out of bound line numbers are ignored
-            - The list is sorted automatically
-    For some reason, LuaLaTeX does not like it when I output newlines with
-    \hlines. The output of this function is a continuous string.
-    ]]
-
-    --Initial conditions
+-- Read a csv to a valid LaTeX table.
+-- @param file string: The name of the file to read.
+-- @param delimiter string: The delimiter (default ',').
+-- @return string: Valid LaTeX table.
+function read_csv(file, delimiter)
+    local array = data_to_table(file, delimiter)
     local result = ""
-    local line = 1 --keeps track of add_to index, not used if inject_on is nil
-    if inject_on ~= nil then
-        table.sort(inject_on)
-    end
+    local line_separator = "\\hline"
 
-    --Insert data
+    -- Insert data
     for y=1, #array do
-        if inject ~= nil and y ~= 1 then
-            if inject_on == nil or inject_on[line] == y then
-                result = result .. inject .. ' '
-                line = line + 1
-            end
+        if y ~= 1 then
+            result = result .. line_separator .. ' '
         end
         for x=1, #array[y] do
             result = result .. array[y][x]
@@ -74,8 +62,3 @@ function tableToTeX(array, inject, inject_on)
     return result
 end
 
---Extends the string type by allowing index selection via at(index) method.
---Can be called as s:at(index)
-function string.at(self,index)
-    return self:sub(index,index)
-end

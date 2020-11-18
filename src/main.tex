@@ -7,7 +7,7 @@
 
 % Packages
 \usepackage[utf8x]{luainputenc}
-\usepackage{luacode} %\luaexec macro: allows for '\\hline' in inline code
+\usepackage{luacode}
 
 % Document
 \begin{document}
@@ -15,21 +15,8 @@
         \hline
         \luaexec{
             require('csvreader.lua')
-            t = dataToTable('data.csv')
-            tex.sprint(tableToTeX(t, '\\hline'))
+            tex.sprint(read_csv('data.csv'))
         } \\
         \hline
-    \end{tabular}
-    \hspace{2cm}
-    \begin{tabular}{c|c|c}
-        \luaexec{
-            tex.sprint(tableToTeX(t, '\\hline', {2}))
-        }
-    \end{tabular}
-    \hspace{2cm}
-    \begin{tabular}{c|cc}
-        \luaexec{
-            tex.sprint(tableToTeX(t, '\\hline', {2, 4, 6, 8}))
-        }
     \end{tabular}
 \end{document}
