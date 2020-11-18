@@ -35,21 +35,37 @@ function data_to_table(file, delimiter)
 end
 
 -- Read a csv to a valid LaTeX table.
+-- Assumes that all rows have equal length.
 -- @param file string: The name of the file to read.
 -- @param delimiter string: The delimiter (default ',').
 -- @return string: Valid LaTeX table.
 function read_csv(file, delimiter)
     local array = data_to_table(file, delimiter)
-    local result = "\\begin{tabular}{|c|c|c|} \\hline \n"
+
+    -- Find maximum number of colums in any row, so we can fill up the rest of the rows
+    local number_of_columns = #array[1]
+    for _, row in ipairs(array) do
+        number_of_columns = math.max(number_of_columns, #row)
+    end
+
+    -- Figure out how many columns we have and give that to the tabular environment
+    local columns = {}
+    for i=1,number_of_columns do
+        columns[i] = "c"
+    end
+    local result = "\\begin{tabular}{|" .. table.concat(columns, "|") .. "|} \\hline \n"
 
     -- Insert data
     for y=1, #array do
         if y ~= 1 then
             result = result .. "\\hline \n" .. ' '
         end
-        for x=1, #array[y] do
-            result = result .. array[y][x]
-            if x < #array[y] then
+        -- Use number of columns from the first row, to automatically throw away extra columns
+        for x=1,number_of_columns do
+            if array[y][x] ~= nil then
+                result = result .. array[y][x]
+            end
+            if x < number_of_columns then
                 result = result .. " & "
             end
         end
