@@ -40,13 +40,12 @@ end
 -- @return string: Valid LaTeX table.
 function read_csv(file, delimiter)
     local array = data_to_table(file, delimiter)
-    local result = ""
-    local line_separator = "\\hline"
+    local result = "\\begin{tabular}{|c|c|c|} \\hline \n"
 
     -- Insert data
     for y=1, #array do
         if y ~= 1 then
-            result = result .. line_separator .. ' '
+            result = result .. "\\hline \n" .. ' '
         end
         for x=1, #array[y] do
             result = result .. array[y][x]
@@ -59,6 +58,7 @@ function read_csv(file, delimiter)
         end
     end
 
-    return result
+    return result .. " \\\\ \\hline \\end{tabular}"
 end
 
+print(read_csv('data.csv'))

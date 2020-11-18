@@ -11,12 +11,9 @@
 
 % Document
 \begin{document}
-    \begin{tabular}{|c|c|c|}
-        \hline
         \luaexec{
             require('csvreader.lua')
             tex.sprint(read_csv('data.csv'))
-        } \\
-        \hline
-    \end{tabular}
+        }
+
 \end{document}
