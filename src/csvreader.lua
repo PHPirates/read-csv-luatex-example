@@ -2,7 +2,6 @@
 -- Follows https://github.com/luarocks/lua-style-guide
 
 -- Convert a csv file to a Lua table.
-
 -- @return table: Two-dimensional table with cell values.
 function data_to_table(file, delimiter)
     delimiter = delimiter or ','
@@ -53,28 +52,38 @@ function read_csv(file, delimiter)
     for i=1,number_of_columns do
         columns[i] = "c"
     end
-    local result = "\\begin{tabular}{|" .. table.concat(columns, "|") .. "|} \\hline \n"
 
+    -- Construct a list of strings, as newlines will be replaced by tex.sprint
+    local result = {}
+    table.insert(result, "\\begin{tabular}{|" .. table.concat(columns, "|") .. "|} \\hline")
+
+    local row = ""
     -- Insert data
     for y=1, #array do
         if y ~= 1 then
-            result = result .. "\\hline \n" .. ' '
+            table.insert(result, row .. "\\hline")
+            row = ""
         end
         -- Use number of columns from the first row, to automatically throw away extra columns
         for x=1,number_of_columns do
             if array[y][x] ~= nil then
-                result = result .. array[y][x]
+                row = row .. array[y][x]
             end
             if x < number_of_columns then
-                result = result .. " & "
+                row = row .. " & "
             end
         end
         if y < #array then
-            result = result .. " \\\\ "
+            row = row .. " \\\\ "
         end
     end
 
-    return result .. " \\\\ \\hline \\end{tabular}"
+    table.insert(result, row)
+    table.insert(result, " \\\\ \\hline")
+    table.insert(result, "\\end{tabular}")
+    return result
 end
 
-print(read_csv('data.csv'))
+for _, row in ipairs(read_csv('data.csv')) do
+    print(row)
+end

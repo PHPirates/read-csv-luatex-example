@@ -13,7 +13,7 @@
 \begin{document}
         \luaexec{
             require('csvreader.lua')
-            tex.sprint(read_csv('data.csv'))
+            tex.sprint(unpack(read_csv('data.csv')))
         }
 
 \end{document}
