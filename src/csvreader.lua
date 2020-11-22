@@ -4,7 +4,7 @@
 -- Convert a csv file to a Lua table.
 -- @return table: Two-dimensional table with cell values.
 function data_to_table(file, delimiter)
-    delimiter = delimiter or ','
+    delimiter = delimiter or ","
 
     -- Always ensures that the file is in its beginning position
     file = io.open(file)
@@ -21,9 +21,17 @@ function data_to_table(file, delimiter)
         data[row][col] = ""
 
         -- Split on delimiter
-        for str in current:gmatch('([^'..delimiter..']+)') do
-            data[row][col] = str
-            col = col + 1
+        local i = 0
+        while true do
+            j = i + 1
+            i = string.find(current, delimiter, i + 1)
+            if i ~= nil then
+                data[row][col] = string.sub(current, j, i - 1)
+                col = col + 1
+            else
+                data[row][col] = string.sub(current, j, string.len(current))
+                break
+            end
         end
         row = row + 1
     end
@@ -55,13 +63,18 @@ function read_csv(file, delimiter)
 
     -- Construct a list of strings, as newlines will be replaced by tex.sprint
     local result = {}
-    table.insert(result, "\\begin{tabular}{|" .. table.concat(columns, "|") .. "|} \\hline")
+
+    function append(value)
+        table.insert(result, value)
+    end
+
+    append("\\begin{tabular}{|" .. table.concat(columns, "|") .. "|} \\hline")
 
     local row = ""
     -- Insert data
     for y=1, #array do
         if y ~= 1 then
-            table.insert(result, row .. "\\hline")
+           append(row .. "\\hline")
             row = ""
         end
         -- Use number of columns from the first row, to automatically throw away extra columns
@@ -78,9 +91,9 @@ function read_csv(file, delimiter)
         end
     end
 
-    table.insert(result, row)
-    table.insert(result, " \\\\ \\hline")
-    table.insert(result, "\\end{tabular}")
+    append(row)
+    append(" \\\\ \\hline")
+    append("\\end{tabular}")
     return result
 end
 
